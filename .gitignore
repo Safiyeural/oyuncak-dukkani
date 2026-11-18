@@ -1,0 +1,17 @@
+# Çalışma zamanında otomatik oluşan veri ve rapor dosyaları
+oyuncaklar.json
+oyuncaklar_bozuk.json
+oyuncak_dukkani.txt
+fiyatlar.txt
+satis_gecmisi.txt
+
+# Python önbellek ve sanal ortam dosyaları
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# IDE ayarları
+.idea/
+.vscode/
