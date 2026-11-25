@@ -32,7 +32,7 @@ def verileri_kaydet():
     with open(DOSYA_ADI, "w", encoding="utf-8") as f:
         json.dump(oyuncaklar, f, ensure_ascii=False, indent=4)
 
-oyuncaklar = verileri_yukle()
+oyuncaklar = {}
 
 def ekleme():
     """Oyuncak listesine yeni oyuncak ekler veya mevcut oyuncağın stoğunu artırır."""
@@ -58,7 +58,7 @@ def ekleme():
 
     if isim in oyuncaklar:
         oyuncaklar[isim]["adet"] += adet
-        print(f"\n{isim} oyuncağının stoğu {adet} adet artırıldı.")
+        print(f"\n{isim.capitalize()} oyuncağının stoğu {adet} adet artırıldı.")
 
     else:
         while True:
@@ -79,14 +79,14 @@ def ekleme():
             "fiyat": fiyat
         }
 
-        print(f"\n{isim} oyuncağı başarıyla eklendi.")
+        print(f"\n{isim.capitalize()} oyuncağı başarıyla eklendi.")
 
     print("\nGüncel oyuncak bilgisi:")
-    print(oyuncaklar[isim])
+    print(f"Adet: {oyuncaklar[isim]['adet']}, Fiyat: {oyuncaklar[isim]['fiyat']} TL")
 
     verileri_kaydet()
 
-    print("\nİşlem başarıyla tamamlandı!\n")
+    print("\nİşlem başarıyla tamamlandı!")
 
 def silme():
     """Belirtilen oyuncaktan istenilen adedi düşer."""
@@ -113,13 +113,14 @@ def silme():
         return
 
     oyuncaklar[isim]["adet"] -= adet
+    print(f"{isim.capitalize()} oyuncağından {adet} adet silinmiştir.")
 
     if oyuncaklar[isim]["adet"] == 0:
         del oyuncaklar[isim]
         print("Ürün stok sıfırlandığı için oyuncak listesinden silindi.")
 
     else:
-        print("Yeni liste:", oyuncaklar[isim])
+        print(f"Yeni stok bilgisi - Adet: {oyuncaklar[isim]['adet']}, Fiyat: {oyuncaklar[isim]['fiyat']} TL")
 
     verileri_kaydet()
 
@@ -129,7 +130,7 @@ def arama():
     if isim not in oyuncaklar:
         print("Kayıtlı böyle bir oyuncak yoktur.")
     else:
-        print(oyuncaklar[isim])
+        print(f"{isim.capitalize()} - Adet: {oyuncaklar[isim]['adet']}, Fiyat: {oyuncaklar[isim]['fiyat']} TL")
 
 def guncelleme():
     """Kayıtlı bir oyuncağın stok miktarını ve birim fiyatını günceller."""
@@ -167,7 +168,7 @@ def guncelleme():
     verileri_kaydet()
 
     print("Oyuncak bilgileri güncellendi.")
-    print(oyuncaklar[isim])
+    print(f"Adet: {oyuncaklar[isim]['adet']}, Fiyat: {oyuncaklar[isim]['fiyat']} TL")
 
 
 
@@ -175,7 +176,7 @@ def listeleme():
     """Tüm oyuncak listesini oyuncak_dukkani.txt dosyasına aktarır ve konsolda listeler."""
     print("OYUNCAK LİSTESİ")
     if not oyuncaklar:
-        print("\nOyuncak listesinde kayıtlı oyuncak bulunmamaktadır.\n")
+        print("Oyuncak listesinde kayıtlı oyuncak bulunmamaktadır.")
         return
 
     with open("oyuncak_dukkani.txt", "w", encoding="utf-8") as dosya:
@@ -183,14 +184,14 @@ def listeleme():
             dosya.write(f"{isim},{bilgi['adet']},{bilgi['fiyat']}\n")
 
     for isim, bilgi in oyuncaklar.items():
-        print(f"{isim}: {bilgi['adet']} adet, {bilgi['fiyat']} TL")
+        print(f"{isim.capitalize()}: {bilgi['adet']} adet, {bilgi['fiyat']} TL")
 
 
 def fiyatlar():
     """Ürünlerin fiyat tarifesini fiyatlar.txt dosyasına yazar ve ekrana bastırır."""
     if not oyuncaklar:
-       print("\nListelenecek oyuncak bulunmamaktadır.\n")
-       return
+        print("Listelenecek oyuncak bulunmamaktadır.")
+        return
 
     with open("fiyatlar.txt", "w", encoding="utf-8") as f:
         for isim, bilgi in oyuncaklar.items():
@@ -199,7 +200,7 @@ def fiyatlar():
     print("OYUNCAK FİYATLARI")
 
     for isim, bilgi in oyuncaklar.items():
-        print(f"{isim}: {bilgi['fiyat']} TL")
+        print(f"{isim.capitalize()}: {bilgi['fiyat']} TL")
 
 
 def satis_yap():
@@ -228,9 +229,9 @@ def satis_yap():
 
                     fiyat = oyuncaklar[isim]["fiyat"]
 
-                    print(f"{isim} {adet} tane satıldı.")
+                    print(f"{isim.capitalize()} {adet} tane satıldı.")
 
-                    satilan_oyuncak.append(isim)
+                    satilan_oyuncak.append(isim.capitalize())
                     satilan_oyuncak_adedi.append(adet)
 
                     oyuncaklar[isim]["adet"] -= adet
@@ -250,12 +251,17 @@ def satis_yap():
         else:
             print("Böyle bir oyuncağımız yok.")
 
-        tercih = input("Başka bir oyuncak satılacak mı? (E/H): ").strip().upper()
+        while True:
+            tercih = input("Başka bir oyuncak satılacak mı? (E/H): ").strip().upper()
+            if tercih == "E":
+                break
+            elif tercih == "H":
+                devam = False
+                break
+            else:
+                print("Lütfen geçerli bir cevap giriniz (E veya H).")
 
-        if tercih != "E":
-            devam = False
-
-    print("Satılan oyuncak isimleri:", satilan_oyuncak)
+    print("Satılan oyuncak isimleri:", ", ".join(satilan_oyuncak) if satilan_oyuncak else "Yok")
     print("Satılan oyuncak adetleri:", satilan_oyuncak_adedi)
     print("Toplam satılan oyuncak adedi:", toplam_satilan_adet)
     print("Toplam kazanç:", round(toplam_kazanc, 2), "TL")
@@ -282,27 +288,27 @@ def satilanlar():
             if icerik.strip() == "":
                 print("Henüz satış yapılmamıştır.")
             else:
-                print(icerik)
+                print(icerik.strip())
     else:
         print("Henüz satış yapılmamıştır.")
 
 
 def kalanlar():
     """Oyuncak listesindeki toplam oyuncak miktarını ve kritik stokları gösterir."""
-    kalan_oyuncak_adedi=0
+    kalan_oyuncak_adedi = 0
     if not oyuncaklar:
-        print("\nOyuncak listesinde kayıtlı oyuncak bulunmamaktadır.\n")
+        print("Oyuncak listesinde kayıtlı oyuncak bulunmamaktadır.")
         return
 
     for isim in oyuncaklar:
-        adet=oyuncaklar[isim]["adet"]
-        kalan_oyuncak_adedi+=adet
-        print(f"{isim} {adet} adet var")
+        adet = oyuncaklar[isim]["adet"]
+        kalan_oyuncak_adedi += adet
+        print(f"{isim.capitalize()} {adet} adet var")
         # Kritik stok eşiği kontrolü
         if adet <= 3:
-            print(f"   [UYARI] {isim} stoğu kritik seviyede!")
+            print(f"   [UYARI] {isim.capitalize()} stoğu kritik seviyede!")
 
-    print("Kalan oyuncak adedi: ",kalan_oyuncak_adedi)
+    print("Kalan oyuncak adedi:", kalan_oyuncak_adedi)
 
 
 def temel_kontrol():
@@ -321,20 +327,20 @@ def temel_kontrol():
         try:
             secim = int(input("Seçiminizi yapınız (1 ile 10 arasında): "))
         except ValueError:
-            print("Lütfen 1 ile 10 arasında geçerli bir sayı giriniz!")
+            print("Lütfen 1 ile 10 arasında geçerli bir sayı giriniz!\n")
             continue
 
-        if secim==1:
+        if secim == 1:
             ekleme()
-        elif secim==2:
+        elif secim == 2:
             silme()
-        elif secim==3:
+        elif secim == 3:
             arama()
-        elif secim==4:
+        elif secim == 4:
             guncelleme()
-        elif secim==5:
+        elif secim == 5:
             listeleme()
-        elif secim==6:
+        elif secim == 6:
             fiyatlar()
         elif secim == 7:
             satis_yap()
@@ -347,6 +353,8 @@ def temel_kontrol():
             break
         else:
             print("Hatalı seçim yaptınız!")
+
+        print()
 
 if __name__ == "__main__":
     temel_kontrol()
